@@ -29,7 +29,7 @@ export default function Home() {
             <NewsSection />
           </div>
         </div>
-        <ParallaxImageComponent />
+        {/* <ParallaxImageComponent /> */}
         <ResearchSection />
         <Gallery />
       </div>
