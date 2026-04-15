@@ -1,0 +1,3 @@
+MONGODB_URI=mongodb://localhost:27017/mvi_lab_website
+ADMIN_ID=******
+ADMIN_PASSWORD=******
