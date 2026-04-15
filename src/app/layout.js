@@ -1,8 +1,8 @@
 import { Noto_Sans_Display } from "next/font/google";
 import "./globals.css";
 import { NewsProvider } from "@/contexts/NewsContext";
-import Navbar from "@/components/Navbar/navbar";
-import { MobileNavbar } from "@/components/MobileNavbar/mobileNavbar";
+import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
+import LayoutClient from "@/components/LayoutClient/LayoutClient";
 import Footer from "@/components/Footer/Footer";
 
 const sans = Noto_Sans_Display({ subsets: ["latin"] });
@@ -15,14 +15,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <NewsProvider>
-      <html lang="en">
-        <body className={`${sans.className} bg-gray-50`}>
-          <MobileNavbar />
-          <Navbar />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-        </body>
-      </html>
+      <AdminAuthProvider>
+        <html lang="en">
+          <body className={`${sans.className} bg-gray-50`}>
+            <LayoutClient>{children}</LayoutClient>
+            <Footer />
+          </body>
+        </html>
+      </AdminAuthProvider>
     </NewsProvider>
   );
 }

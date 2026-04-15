@@ -21,7 +21,7 @@ export async function connectDB() {
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {
-      dbName: "case-management",
+      dbName: "mvi_lab_website",
       bufferCommands: false,
     });
   }

@@ -23,7 +23,7 @@ function NewsSection() {
 
       try {
         const response = await fetch(
-            `https://refreshing-benefit-91aab22e0f.strapiapp.com/api/notices`
+            `/api/notices`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
