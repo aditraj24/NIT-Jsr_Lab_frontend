@@ -41,40 +41,40 @@ export default function JournalsPage() {
               Published on {year}
             </h1>
             {researchData[year].map((data) => (
-              <div className="mb-12 bg-slate-50 rounded-sm mx-auto px-8 flex flex-col items-center sm:items-center py-8 w-4/5 md:w-2/3" key={data.id}>
-              <div  className="  ">
-                <div className=" w-full relative " key={data.id}>
-                  <span className="text-left absolute font-bold" key={data.id}>{data.attributes.Title}</span>
-                  <span className="italic absolute right-4 text-right" key={data.id}>{data.attributes.Date}</span>
-                  <br/>
-                  <p className="text-left mt-5" key={data.id}>{data.attributes.Description}</p>
-                  <br/>
-                  
-                  <br/>
-                 
+              <div className="mb-8 bg-slate-50 rounded-lg shadow-sm border border-slate-200 mx-auto px-6 sm:px-10 py-8 flex flex-col w-11/12 md:w-3/4 max-w-4xl" key={data.id}>
+                
+                {/* Header: Title and Date */}
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-6 mb-4">
+                  <h3 className="text-left font-semibold text-xl text-sky-950">{data.attributes.Title}</h3>
+                  <span className="italic text-slate-500 whitespace-nowrap pt-1">{data.attributes.Date}</span>
                 </div>
-              
-              </div>
-              <div className="flex sm:flex-row sm:justify-between flex-wrap flex-col w-full">
-                <button className="font-semibold px-3 py-1 sm:mr-3 w-fit rounded-sm bg-gray-200 text-left" key={data.id}>
-                  {data.attributes.author?.data?.attributes?.name || 'Unknown author'}
-                </button>
-                {data.attributes.Link ? (
-                  <button
-                    className=" right-0  bg-cyan-600 sm:ml-3 mt-5 sm:mt-0 text-white py-2 px-4 border-2 border-cyan-600 hover:bg-transparent hover:text-cyan-600 transition-all duration-300 w-48"
-                    onClick={() => { window.open(data.attributes.Link) }} key={data.id}
-                  >
-                    Paper
-                  </button>
-                ) : (
-                  <button
-                    className=" right-0  bg-slate-400 sm:ml-3 mt-5 sm:mt-0 text-white py-2 px-4 border-2 border-slate-400 rounded-sm w-48"
-                    disabled
-                    key={`${data.id}-no-link`}
-                  >
-                    No Paper Link
-                  </button>
-                )}
+                
+                {/* Description Text */}
+                <p className="text-left text-slate-600 mb-6 leading-relaxed w-full">
+                  {data.attributes.Description}
+                </p>
+
+                {/* Footer Controls */}
+                <div className="flex flex-col sm:flex-row sm:justify-between items-center w-full border-t border-gray-200 pt-5 mt-auto">
+                  <span className="font-medium bg-white border border-gray-200 px-4 py-2 text-slate-700 rounded-md w-full sm:w-auto text-center sm:text-left mb-4 sm:mb-0">
+                    {data.attributes.author?.data?.attributes?.name || 'Unknown author'}
+                  </span>
+                  
+                  {data.attributes.Link ? (
+                    <button
+                      className="bg-sky-600 text-white py-2 px-6 rounded-md shadow-sm hover:bg-sky-700 hover:shadow transition-all duration-300 w-full sm:w-auto font-medium"
+                      onClick={() => { window.open(data.attributes.Link, '_blank') }}
+                    >
+                      View Paper
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-slate-300 text-slate-500 py-2 px-6 rounded-md w-full sm:w-auto font-medium cursor-not-allowed"
+                      disabled
+                    >
+                      No Paper Link
+                    </button>
+                  )}
                 </div> 
               </div>
             ))}
