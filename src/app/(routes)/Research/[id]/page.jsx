@@ -21,19 +21,10 @@ const ResearchItem = ({ params }) => {
     const fetchResearchItem = async () => {
       try {
         const data = await fetchData(
-          `/api/research-sections/${id}?populate=*`
-        );
-
-        const imageData = await fetchData(
-          `/api/research-sections/${id}?populate[0]=ReasearchContent.Image&populate[1]=AimAndSummary.Image`
-        );
-
-        const researchContentImages = imageData.data.attributes.ReasearchContent.map(
-          (content) => content.Image?.data?.attributes || null
+          `/api/research-sections/${id}`
         );
 
         setResearchItem(data.data);
-        setContentImages(researchContentImages);
       } catch (error) {
         console.error("Error fetching research data:", error);
       } finally {
@@ -63,7 +54,7 @@ const ResearchItem = ({ params }) => {
     ReasearchContent,
   } = researchItem.attributes;
 
-  const thumbnailImage = Thumbnail?.data?.attributes?.formats?.large?.url || img;
+  const thumbnailImage = Thumbnail?.data?.attributes?.url || img;
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -76,22 +67,22 @@ const ResearchItem = ({ params }) => {
       <Breadcrumbs />
 
       <Theme
-        themes={Themes?.map((theme) => theme.Theme) || []}
+        themes={Themes?.map((theme) => theme.title || theme.description) || []}
         heading={Description}
       />
 
       {ReasearchContent && ReasearchContent.length > 0 && (
         <Content
-          link={ReasearchContent[0]?.Link}
-          text={ReasearchContent[0]?.ReasearchContent}
-          imageUrl={contentImages[0]?.url || thumbnailImage}
+          link={ReasearchContent[0]?.media}
+          text={ReasearchContent[0]?.body}
+          imageUrl={ReasearchContent[0]?.media || thumbnailImage}
           thumbnailImage={thumbnailImage}
         />
       )}
 
       <ResearchPapers papers={PapersPublished || []} />
 
-      <ResearchMembers membersList={Members?.map((member) => member.Members) || []} />
+      <ResearchMembers membersList={Members?.map((member) => member.title || member.description) || []} />
     </div>
   );
 };

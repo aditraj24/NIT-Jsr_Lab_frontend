@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NewsCard from "@/components/HomeComponents/NewsComponents/NewsCard";
-import { useNews } from "@/contexts/NewsContext";
 import BreadCrumbs from "@/components/BreadCrumbs/BreadCrumbs";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
@@ -16,7 +15,6 @@ function NewsPage() {
   const [totalPages, setTotalPages] = useState(1);
 
   const router = useRouter();
-  const { setNews } = useNews();
 
   useEffect(() => {
     const getData = async () => {
@@ -50,8 +48,7 @@ function NewsPage() {
   }, [currentPage]);
 
   const handleCardClick = (newsItem) => {
-    setNews(newsItem);
-    router.push("/Updates/Details");
+    router.push(`/Updates/${newsItem.id}`);
   };
 
   const handlePageChange = (event, value) => {
@@ -77,8 +74,6 @@ function NewsPage() {
           </div>
         ) : (
           notices.map((newsItem) => {
-            const viewMoreLink = newsItem.attributes.Pdf?.data?.attributes?.url || "#";
-            const galleryLink = newsItem.attributes.Pdf?.data?.attributes?.url || "#";
             return (
               <div
                 key={newsItem.id}
@@ -89,8 +84,6 @@ function NewsPage() {
                   date={newsItem.attributes.publishedAt}
                   title={newsItem.attributes.Title}
                   description={newsItem.attributes.Description}
-                  viewMoreLink={viewMoreLink}
-                  galleryLink={galleryLink}
                 />
               </div>
             );

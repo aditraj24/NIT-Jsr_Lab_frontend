@@ -18,18 +18,18 @@ import {
 
 /* ── Navigation data shared by desktop & mobile ─────────────────────── */
 const NAV_ITEMS = [
-  { name: "Research", href: "/Research", hasDropdown: true },
-  { name: "Members", href: "/", hasDropdown: true },
-  { name: "Achievements", href: "/Achievements", hasDropdown: true },
+  { name: "Research", href: "/Research", hasDropdown: false },
+  { name: "Members", href: "/Members/LabHead", hasDropdown: true },
+  { name: "Achievements", href: "/Achievements/Fundings", hasDropdown: true },
   { name: "Gallery", href: "/Gallery", hasDropdown: false },
   { name: "Updates", href: "/Updates", hasDropdown: false },
 ];
 
 /* ── Framer-motion variants ──────────────────────────────────────────── */
 const dropdownVariants = {
-  hidden: { opacity: 0, scaleY: 0, transformOrigin: "top" },
-  visible: { opacity: 1, scaleY: 1, transformOrigin: "top" },
-  exit: { opacity: 0, scaleY: 0, transformOrigin: "top" },
+  hidden: { opacity: 0, y: -8, scale: 0.95, transformOrigin: "top" },
+  visible: { opacity: 1, y: 0, scale: 1, transformOrigin: "top" },
+  exit: { opacity: 0, y: -8, scale: 0.95, transformOrigin: "top" },
 };
 
 const overlayVariants = {
@@ -55,6 +55,13 @@ const ChevronDown = ({ open }) => (
     strokeWidth={2}
   >
     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+  </svg>
+);
+
+/* ── Small Caret Icon (for desktop dropdowns) ────────────────────────── */
+const CaretDown = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-[14px] w-[14px] ml-1 opacity-70" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
   </svg>
 );
 
@@ -130,9 +137,9 @@ export default function Navbar() {
         <div className="flex justify-between h-20 items-center">
 
           {/* ── Logo ─────────────────────────────────────────── */}
-          <Link href="/" className="flex-shrink-0" onClick={closeMobile}>
+          <a href="/"  className="flex-shrink-0" onClick={closeMobile}>
             <Image src={logo} width={80} height={80} alt="Lab Logo" />
-          </Link>
+          </a>
 
           {/* ══════════════════════════════════════════════════
               DESKTOP NAV (hidden below lg)
@@ -142,32 +149,27 @@ export default function Navbar() {
               item.hasDropdown ? (
                 <div
                   key={item.name}
-                  className="relative"
+                  className="relative group"
                   onMouseEnter={() => setHoveredItem(item.name)}
                   onMouseLeave={() => setHoveredItem(null)}
                 >
-                  {item.name === "Members" ? (
-                    <span className="text-gray-700 hover:text-blue-600 font-semibold cursor-pointer transition-colors">
-                      {item.name.toUpperCase()}
-                    </span>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className="text-gray-700 hover:text-blue-600 font-semibold transition-colors"
-                    >
-                      {item.name.toUpperCase()}
-                    </Link>
-                  )}
+                  <Link
+                    href={item.href}
+                    className="flex items-center text-gray-700 hover:text-blue-600 font-semibold transition-colors py-2"
+                  >
+                    {item.name.toUpperCase()}
+                    <CaretDown />
+                  </Link>
 
                   <AnimatePresence>
                     {hoveredItem === item.name && (
                       <motion.div
-                        className="absolute top-full left-0 w-48"
+                        className="absolute top-full left-0 pt-2 z-50 w-max"
                         initial="hidden"
                         animate="visible"
                         exit="exit"
                         variants={dropdownVariants}
-                        transition={{ duration: 0.2, ease: "easeInOut" }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
                       >
                         <DesktopDropdown name={item.name} />
                       </motion.div>
@@ -178,7 +180,7 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-gray-700 hover:text-blue-600 font-semibold transition-colors"
+                  className="text-gray-700 hover:text-blue-600 font-semibold transition-colors py-2"
                 >
                   {item.name.toUpperCase()}
                 </Link>
