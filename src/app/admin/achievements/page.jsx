@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import FileUpload from '@/components/FileUpload/FileUpload';
 
 export default function AdminAchievementsPage() {
   const [loading, setLoading] = useState(true);
@@ -83,7 +84,6 @@ export default function AdminAchievementsPage() {
         throw new Error(errorData.error || 'Failed to create achievement');
       }
 
-      const data = await response.json();
       setSuccess('Achievement created successfully!');
       setFormData({
         Title: '',
@@ -225,36 +225,22 @@ export default function AdminAchievementsPage() {
             </div>
 
             {/* Thumbnail */}
-            <div>
-              <label htmlFor="Thumbnail" className="block text-sm font-semibold text-gray-700 mb-2">
-                Thumbnail URL
-              </label>
-              <input
-                type="url"
-                id="Thumbnail"
-                name="Thumbnail"
-                value={formData.Thumbnail}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
+            <FileUpload
+              label="Thumbnail Image"
+              accept="image/*"
+              folder="mvi_lab/achievements"
+              value={formData.Thumbnail}
+              onChange={(url) => setFormData((prev) => ({ ...prev, Thumbnail: url }))}
+            />
 
             {/* PDF */}
-            <div>
-              <label htmlFor="Pdf" className="block text-sm font-semibold text-gray-700 mb-2">
-                PDF URL
-              </label>
-              <input
-                type="url"
-                id="Pdf"
-                name="Pdf"
-                value={formData.Pdf}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="https://example.com/paper.pdf"
-              />
-            </div>
+            <FileUpload
+              label="PDF File"
+              accept=".pdf"
+              folder="mvi_lab/achievements"
+              value={formData.Pdf}
+              onChange={(url) => setFormData((prev) => ({ ...prev, Pdf: url }))}
+            />
 
             {/* Submit Button */}
             <div className="flex gap-4">

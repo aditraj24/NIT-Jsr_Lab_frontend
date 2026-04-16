@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import FileUpload from '@/components/FileUpload/FileUpload';
 
 export default function AdminGalleryPage() {
   const [loading, setLoading] = useState(true);
@@ -165,21 +166,14 @@ export default function AdminGalleryPage() {
             />
           </div>
 
-          <div>
-            <label htmlFor="cover_image" className="block text-sm font-semibold text-gray-700 mb-2">
-              Cover Image URL *
-            </label>
-            <input
-              type="url"
-              id="cover_image"
-              name="cover_image"
-              value={formData.cover_image}
-              onChange={handleInputChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="https://example.com/cover.jpg"
-            />
-          </div>
+          <FileUpload
+            label="Cover Image"
+            accept="image/*"
+            folder="mvi_lab/gallery"
+            value={formData.cover_image}
+            onChange={(url) => setFormData((prev) => ({ ...prev, cover_image: url }))}
+            required
+          />
 
           {/* Images */}
           <div>
@@ -198,18 +192,13 @@ export default function AdminGalleryPage() {
               {images.map((image, index) => (
                 <div key={index} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Image URL *
-                      </label>
-                      <input
-                        type="url"
-                        value={image.url}
-                        onChange={(e) => handleImageChange(index, 'url', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="https://example.com/image.jpg"
-                      />
-                    </div>
+                    <FileUpload
+                      label={`Image ${index + 1}`}
+                      accept="image/*"
+                      folder="mvi_lab/gallery/images"
+                      value={image.url}
+                      onChange={(url) => handleImageChange(index, 'url', url)}
+                    />
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Caption

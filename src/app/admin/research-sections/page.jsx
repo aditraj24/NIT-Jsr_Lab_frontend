@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import FileUpload from '@/components/FileUpload/FileUpload';
 
 export default function AdminResearchSectionsPage() {
   const [loading, setLoading] = useState(true);
@@ -167,21 +168,14 @@ export default function AdminResearchSectionsPage() {
             />
           </div>
 
-          <div>
-            <label htmlFor="Thumbnail" className="block text-sm font-semibold text-gray-700 mb-2">
-              Thumbnail URL *
-            </label>
-            <input
-              type="url"
-              id="Thumbnail"
-              name="Thumbnail"
-              value={formData.Thumbnail}
-              onChange={handleInputChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="https://example.com/thumbnail.jpg"
-            />
-          </div>
+          <FileUpload
+            label="Thumbnail Image"
+            accept="image/*"
+            folder="mvi_lab/research"
+            value={formData.Thumbnail}
+            onChange={(url) => setFormData((prev) => ({ ...prev, Thumbnail: url }))}
+            required
+          />
 
           {/* Themes */}
           <div>
@@ -257,13 +251,21 @@ export default function AdminResearchSectionsPage() {
               <span className="text-sm font-semibold text-gray-700">Research Content</span>
               <button type="button" onClick={addArrayItem(setResearchContent, { heading: '', body: '', media: '' })} className="text-blue-600 hover:text-blue-800">Add</button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-4">
               {researchContent.map((item, index) => (
-                <div className="flex gap-2" key={`content-${index}`}>
-                  <input type="text" value={item.heading} onChange={(e) => handleArrayChange(setResearchContent)(index, 'heading', e.target.value)} className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Content heading" />
-                  <textarea value={item.body} onChange={(e) => handleArrayChange(setResearchContent)(index, 'body', e.target.value)} className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Content body" rows="2" />
-                  <input type="url" value={item.media} onChange={(e) => handleArrayChange(setResearchContent)(index, 'media', e.target.value)} className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Media URL" />
-                  {index > 0 && <button type="button" className="px-3 rounded-lg bg-red-500 text-white" onClick={() => removeArrayItem(setResearchContent)(index)}>Remove</button>}
+                <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3" key={`content-${index}`}>
+                  <div className="flex gap-2">
+                    <input type="text" value={item.heading} onChange={(e) => handleArrayChange(setResearchContent)(index, 'heading', e.target.value)} className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Content heading" />
+                    {index > 0 && <button type="button" className="px-3 rounded-lg bg-red-500 text-white" onClick={() => removeArrayItem(setResearchContent)(index)}>Remove</button>}
+                  </div>
+                  <textarea value={item.body} onChange={(e) => handleArrayChange(setResearchContent)(index, 'body', e.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Content body" rows="3" />
+                  <FileUpload
+                    label="Media"
+                    accept="image/*"
+                    folder="mvi_lab/research/content"
+                    value={item.media}
+                    onChange={(url) => handleArrayChange(setResearchContent)(index, 'media', url)}
+                  />
                 </div>
               ))}
             </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import FileUpload from '@/components/FileUpload/FileUpload';
 
 export default function AdminNoticesPage() {
   const [loading, setLoading] = useState(true);
@@ -118,21 +119,14 @@ export default function AdminNoticesPage() {
             />
           </div>
 
-          <div>
-            <label htmlFor="Pdf" className="block text-sm font-semibold text-gray-700 mb-2">
-              PDF URL *
-            </label>
-            <input
-              type="url"
-              id="Pdf"
-              name="Pdf"
-              value={formData.Pdf}
-              onChange={handleInputChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="https://example.com/notice.pdf"
-            />
-          </div>
+          <FileUpload
+            label="PDF File"
+            accept=".pdf"
+            folder="mvi_lab/notices"
+            value={formData.Pdf}
+            onChange={(url) => setFormData((prev) => ({ ...prev, Pdf: url }))}
+            required
+          />
 
           <div className="flex gap-4">
             <button

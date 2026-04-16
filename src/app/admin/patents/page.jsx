@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import FileUpload from '@/components/FileUpload/FileUpload';
 
 export default function AdminPatentsPage() {
   const [loading, setLoading] = useState(true);
@@ -72,12 +73,6 @@ export default function AdminPatentsPage() {
     );
   };
 
-  const handleDocUrlChange = (index, value) => {
-    const newDocUrls = [...docUrls];
-    newDocUrls[index] = value;
-    setDocUrls(newDocUrls);
-  };
-
   const addDocUrl = () => {
     setDocUrls([...docUrls, '']);
   };
@@ -97,7 +92,7 @@ export default function AdminPatentsPage() {
         ...formData,
         head: selectedHead || null,
         collaborators: selectedCollaborators,
-        docs: docUrls.filter((url) => url.trim()), // Filter out empty strings
+        docs: docUrls.filter((url) => url.trim()),
       };
 
       const response = await fetch('/api/patent', {
@@ -113,7 +108,6 @@ export default function AdminPatentsPage() {
         throw new Error(errorData.error || 'Failed to create patent');
       }
 
-      const data = await response.json();
       setSuccess('Patent entry created successfully!');
       setFormData({
         title: '',
@@ -266,41 +260,38 @@ export default function AdminPatentsPage() {
             </div>
 
             {/* Cover Image */}
-            <div>
-              <label htmlFor="cover_image" className="block text-sm font-semibold text-gray-700 mb-2">
-                Cover Image URL
-              </label>
-              <input
-                type="url"
-                id="cover_image"
-                name="cover_image"
-                value={formData.cover_image}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
+            <FileUpload
+              label="Cover Image"
+              accept="image/*"
+              folder="mvi_lab/patents"
+              value={formData.cover_image}
+              onChange={(url) => setFormData((prev) => ({ ...prev, cover_image: url }))}
+            />
 
-            {/* Document URLs */}
+            {/* Document Files */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Document Links (Patent, PDF, etc.)
+                Document Files (Patent PDFs, etc.)
               </label>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {docUrls.map((url, index) => (
-                  <div key={index} className="flex gap-2">
-                    <input
-                      type="url"
+                  <div key={index} className="p-3 border border-gray-200 rounded-lg bg-gray-50">
+                    <FileUpload
+                      label={`Document ${index + 1}`}
+                      accept=".pdf,.doc,.docx"
+                      folder="mvi_lab/patents/docs"
                       value={url}
-                      onChange={(e) => handleDocUrlChange(index, e.target.value)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder={`Document URL ${index + 1}`}
+                      onChange={(uploadedUrl) => {
+                        const newDocUrls = [...docUrls];
+                        newDocUrls[index] = uploadedUrl;
+                        setDocUrls(newDocUrls);
+                      }}
                     />
                     {index > 0 && (
                       <button
                         type="button"
                         onClick={() => removeDocUrl(index)}
-                        className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                        className="mt-2 px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm"
                       >
                         Remove
                       </button>
@@ -313,7 +304,7 @@ export default function AdminPatentsPage() {
                 onClick={addDocUrl}
                 className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
               >
-                + Add Document Link
+                + Add Document
               </button>
             </div>
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import FileUpload from '@/components/FileUpload/FileUpload';
 
 const roles = ['Collaborator', 'Alumni', 'Faculty', 'Researcher', 'Student'];
 
@@ -176,14 +177,20 @@ export default function AdminMembersPage() {
           </label>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-semibold text-gray-700">Profile Photo URL</span>
-              <input type="url" name="profilePhoto" value={formData.profilePhoto} onChange={handleInputChange} className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-            </label>
-            <label className="block">
-              <span className="text-sm font-semibold text-gray-700">Resume URL</span>
-              <input type="url" name="resume" value={formData.resume} onChange={handleInputChange} className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-            </label>
+            <FileUpload
+              label="Profile Photo"
+              accept="image/*"
+              folder="mvi_lab/members"
+              value={formData.profilePhoto}
+              onChange={(url) => setFormData((prev) => ({ ...prev, profilePhoto: url }))}
+            />
+            <FileUpload
+              label="Resume"
+              accept=".pdf,.doc,.docx"
+              folder="mvi_lab/resumes"
+              value={formData.resume}
+              onChange={(url) => setFormData((prev) => ({ ...prev, resume: url }))}
+            />
           </div>
 
           <label className="block">

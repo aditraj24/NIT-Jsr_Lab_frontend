@@ -170,17 +170,8 @@ export default function AdminDashboard() {
             </Link>
           </div>
 
-          {/* Members Card */}
-          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Members</h3>
-            <p className="text-gray-600 mb-4">Manage team members and staff</p>
-            <button
-              disabled
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded transition"
-            >
-              Coming Soon
-            </button>
-          </div>
+         
+          
         </div>
 
       </main>
