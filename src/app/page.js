@@ -9,7 +9,6 @@ import img2 from "../assets/images/lab2.png";
 import ResearchSection from "@/app/(routes)/Research/_components/ResearchSection/ResearchSection";
 import bg from '@/assets/images/bg.jpg';
 import Navbar from "@/components/Navbar/navbar";
-// import { MobileNavbar } from "@/components/MobileNavbar/mobileNavbar";
 export default function Home() {
   return (
     <div className="w-full overflow-hidden">
