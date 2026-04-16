@@ -21,11 +21,11 @@ const ResearchItem = ({ params }) => {
     const fetchResearchItem = async () => {
       try {
         const data = await fetchData(
-          `https://refreshing-benefit-91aab22e0f.strapiapp.com/api/research-sections/${id}?populate=*`
+          `/api/research-sections/${id}?populate=*`
         );
 
         const imageData = await fetchData(
-          `https://refreshing-benefit-91aab22e0f.strapiapp.com/api/research-sections/${id}?populate[0]=ReasearchContent.Image&populate[1]=AimAndSummary.Image`
+          `/api/research-sections/${id}?populate[0]=ReasearchContent.Image&populate[1]=AimAndSummary.Image`
         );
 
         const researchContentImages = imageData.data.attributes.ReasearchContent.map(

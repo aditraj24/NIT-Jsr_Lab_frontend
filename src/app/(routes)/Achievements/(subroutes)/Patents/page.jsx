@@ -10,7 +10,7 @@ export default function PatentsPage() {
 
   useEffect(() => {
     const getData = async () => {
-      const response = await fetch(`https://refreshing-benefit-91aab22e0f.strapiapp.com/api/patents?populate[docs][fields][0]=*&populate[head][fields][0]=*&populate[collaborators][fields][0]=*`);
+      const response = await fetch(`/api/patents?populate[docs][fields][0]=*&populate[head][fields][0]=*&populate[collaborators][fields][0]=*`);
       const data = await response.json();
       
 
