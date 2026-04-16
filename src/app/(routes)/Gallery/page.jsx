@@ -14,7 +14,7 @@ const GalleryPage = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `/api/galleries?populate=cover_image`
+          `/api/gallery?page=1&pageSize=12`
         );
         const result = await response.json();
 

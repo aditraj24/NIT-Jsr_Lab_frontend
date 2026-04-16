@@ -8,7 +8,7 @@ export default function JournalsPage() {
 
   useEffect(() => {
     const getData = async () => {
-      const response = await fetch(`/api/achievements?populate=author`);
+      const response = await fetch(`/api/achievement?populate=author`);
       const data = await response.json();
 
       const sortedData = data.data.sort((a, b) => new Date(b.attributes.Date) - new Date(a.attributes.Date));
@@ -56,13 +56,25 @@ export default function JournalsPage() {
               
               </div>
               <div className="flex sm:flex-row sm:justify-between flex-wrap flex-col w-full">
-                <button className="font-semibold px-3 py-1 sm:mr-3 w-fit rounded-sm bg-gray-200 text-left" key={data.id}>{data.attributes.author.data.attributes.name}</button>
-                <button
-                  className=" right-0  bg-cyan-600 sm:ml-3 mt-5 sm:mt-0 text-white py-2 px-4 border-2 border-cyan-600 hover:bg-transparent hover:text-cyan-600 transition-all duration-300 w-48"
-                  onClick={() => { window.open(data.attributes.Link) }} key={data.id}
-                >
-                  Paper
+                <button className="font-semibold px-3 py-1 sm:mr-3 w-fit rounded-sm bg-gray-200 text-left" key={data.id}>
+                  {data.attributes.author?.data?.attributes?.name || 'Unknown author'}
                 </button>
+                {data.attributes.Link ? (
+                  <button
+                    className=" right-0  bg-cyan-600 sm:ml-3 mt-5 sm:mt-0 text-white py-2 px-4 border-2 border-cyan-600 hover:bg-transparent hover:text-cyan-600 transition-all duration-300 w-48"
+                    onClick={() => { window.open(data.attributes.Link) }} key={data.id}
+                  >
+                    Paper
+                  </button>
+                ) : (
+                  <button
+                    className=" right-0  bg-slate-400 sm:ml-3 mt-5 sm:mt-0 text-white py-2 px-4 border-2 border-slate-400 rounded-sm w-48"
+                    disabled
+                    key={`${data.id}-no-link`}
+                  >
+                    No Paper Link
+                  </button>
+                )}
                 </div> 
               </div>
             ))}

@@ -13,7 +13,7 @@ const StudentPage = ({ params }) => {
     const fetchStudentData = async () => {
       try {
         const response = await fetch(
-          `/api/Students?filters[roll][$eq]=${rollNumber}&populate=*`
+          `/api/students?filters[roll][$eq]=${rollNumber}&populate=*`
         );
         const result = await response.json();
 

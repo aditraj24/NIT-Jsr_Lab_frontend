@@ -57,7 +57,7 @@ export default function AdminDashboard() {
         {/* Welcome Section */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Welcome, {adminId}!
+            Welcome
           </h2>
           <p className="text-gray-600">
             You are now logged in to the admin panel. Manage your website content from here.
@@ -66,70 +66,114 @@ export default function AdminDashboard() {
 
         {/* Dashboard Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {/* Achievements Card */}
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Achievements & Journals</h3>
+            <p className="text-gray-600 mb-4">Add and manage achievements and journal publications</p>
+            <Link href="/admin/achievements">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                Manage
+              </button>
+            </Link>
+          </div>
+
+          {/* Research Fundings Card */}
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Research Fundings</h3>
+            <p className="text-gray-600 mb-4">Add and manage research funding entries</p>
+            <Link href="/admin/fundings">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                Manage
+              </button>
+            </Link>
+          </div>
+
+          {/* Patents Card */}
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Patents</h3>
+            <p className="text-gray-600 mb-4">Add and manage patent entries</p>
+            <Link href="/admin/patents">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                Manage
+              </button>
+            </Link>
+          </div>
+
+          {/* Members Card */}
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Members</h3>
+            <p className="text-gray-600 mb-4">Manage collaborators, alumni, and faculty profiles</p>
+            <Link href="/admin/members">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                Manage
+              </button>
+            </Link>
+          </div>
+
+          {/* Students Card */}
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Students</h3>
+            <p className="text-gray-600 mb-4">Manage student profiles and project entries</p>
+            <Link href="/admin/students">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                Manage
+              </button>
+            </Link>
+          </div>
+
           {/* Notices Card */}
           <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-2">Notices</h3>
             <p className="text-gray-600 mb-4">Manage notices and updates</p>
-            <button
-              disabled
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded transition"
-            >
-              Coming Soon
-            </button>
+            <Link href="/admin/notices">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                Manage
+              </button>
+            </Link>
           </div>
 
           {/* Research Sections Card */}
           <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-2">Research Sections</h3>
             <p className="text-gray-600 mb-4">Manage research projects and content</p>
-            <button
-              disabled
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded transition"
-            >
-              Coming Soon
-            </button>
+            <Link href="/admin/research-sections">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                Manage
+              </button>
+            </Link>
+          </div>
+
+          {/* Gallery Card */}
+          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Gallery</h3>
+            <p className="text-gray-600 mb-4">Manage photo galleries and albums</p>
+            <Link href="/admin/gallery">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                Manage
+              </button>
+            </Link>
           </div>
 
           {/* Members Card */}
           <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-2">Members</h3>
             <p className="text-gray-600 mb-4">Manage team members and staff</p>
-            <button
-              disabled
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded transition"
-            >
-              Coming Soon
-            </button>
-          </div>
-
-          {/* Achievements Card */}
-          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Achievements</h3>
-            <p className="text-gray-600 mb-4">Manage achievements and awards</p>
-            <button
-              disabled
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded transition"
-            >
-              Coming Soon
-            </button>
-          </div>
-
-          {/* Gallery Card */}
-          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Gallery</h3>
-            <p className="text-gray-600 mb-4">Manage photos and image galleries</p>
-            <button
-              disabled
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded transition"
-            >
-              Coming Soon
-            </button>
-          </div>
-
-          {/* Settings Card */}
-          <div className="bg-white rounded-lg shadow hover:shadow-lg transition p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Settings</h3>
-            <p className="text-gray-600 mb-4">Configure system settings</p>
             <button
               disabled
               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-2 px-4 rounded transition"

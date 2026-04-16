@@ -11,7 +11,7 @@ export default function FundingsPage() {
 
   useEffect(() => {
 
-    fetch("/api/fundings")
+    fetch("/api/funding")
       .then(res => res.json())
       .then((obj) => {
         let fd = {};

@@ -3,18 +3,14 @@ import mongoose, { Schema, models, model } from "mongoose"
 // Optional reusable schemas (same as Member)
 const ResearchItemSchema = new Schema(
   {
-    title: String,
-    description: String,
-    link: String
+    research: String
   },
   { _id: false }
 )
 
 const ProjectItemSchema = new Schema(
   {
-    title: String,
-    description: String,
-    link: String
+    project: String
   },
   { _id: false }
 )
