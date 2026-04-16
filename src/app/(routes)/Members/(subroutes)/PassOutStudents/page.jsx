@@ -10,7 +10,7 @@ export default function PassOutStudentsPage() {
     async function fetchAlumni() {
       try {
         const response = await fetchData(
-          "/api/members?filters[role][$eq]=Alumni&populate=*"
+          "/api/members?filters[role][$eq]=Pass-Out Student&populate=*"
         );
         const data = response.data;
 

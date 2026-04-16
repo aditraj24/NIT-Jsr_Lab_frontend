@@ -1,6 +1,8 @@
 import { connectDB } from "@/lib/db";
 import { Member } from "@/models/member";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request) {
   try {
     await connectDB();

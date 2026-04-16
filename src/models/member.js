@@ -29,7 +29,7 @@ const MemberSchema = new Schema(
 
     role: {
       type: String,
-      enum: ["Collaborator", "Alumni", "Faculty", "Researcher", "Student"],
+      enum: ["Pass-Out Student","Collaborative Researchers"],
     },
 
     about: {

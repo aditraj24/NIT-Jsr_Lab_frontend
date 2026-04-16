@@ -11,7 +11,7 @@ function Collaborators() {
     const getData = async () => {
       setLoading(true);
       const activitiesData = await fetch(
-        `/api/members?filters[role][$eq]=Collaborator&populate=*`
+        `/api/members?filters[role][$eq]=Collaborative Researchers&populate=*`
       );
       const res = await activitiesData.json();
       setCollaborators(res.data);

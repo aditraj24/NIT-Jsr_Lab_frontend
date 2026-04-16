@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import FileUpload from '@/components/FileUpload/FileUpload';
 
-const roles = ['Collaborator', 'Alumni', 'Faculty', 'Researcher', 'Student'];
+const roles = ['Pass-Out Student', 'Collaborative Researchers'];
 
 export default function AdminMembersPage() {
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,7 @@ export default function AdminMembersPage() {
     phone: '',
     position: '',
     department: '',
-    role: 'Collaborator',
+    role: 'Collaborative Researchers',
     about: '',
     bio: '',
     qualifications: '',
@@ -91,7 +91,7 @@ export default function AdminMembersPage() {
         phone: '',
         position: '',
         department: '',
-        role: 'Collaborator',
+        role: 'Collaborative Researchers',
         about: '',
         bio: '',
         qualifications: '',
