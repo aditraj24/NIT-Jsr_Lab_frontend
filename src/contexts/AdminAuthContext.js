@@ -9,14 +9,9 @@ export function AdminAuthProvider({ children }) {
     if (typeof window === 'undefined') return false;
     return !!localStorage.getItem('adminToken');
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Ensure auth state is in sync after mount
-    const adminToken = localStorage.getItem('adminToken');
-    setIsAdminLoggedIn(!!adminToken);
-    setIsLoading(false);
-
     // Listen for storage changes (works across tabs and programmatic changes)
     const handleStorageChange = (e) => {
       if (e.key === 'adminToken') {
