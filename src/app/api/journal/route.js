@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/db";
-import { Achievement } from "@/models/achievement";
+import { Achievement } from "@/models/journal";
 import { Member } from "@/models/member";
 export async function POST(request) {
   try {

@@ -71,7 +71,7 @@ export default function AdminAchievementsPage() {
         author: selectedAuthor || null,
       };
 
-      const response = await fetch('/api/achievement', {
+      const response = await fetch('/api/journal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ export default function AdminAchievementsPage() {
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Add Achievement / Journal
+            Add Journal
           </h1>
           <p className="text-gray-600 mb-8">
             Create a new achievement or journal entry to be displayed on the website

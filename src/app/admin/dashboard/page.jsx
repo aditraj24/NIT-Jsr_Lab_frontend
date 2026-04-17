@@ -79,7 +79,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
           {[
-            { title: "Achievements & Journals", desc: "Manage achievements and publications", link: "/admin/achievements" },
+            { title: "Journals", desc: "Manage achievements and publications", link: "/admin/journals" },
             { title: "Research Fundings", desc: "Manage funding entries", link: "/admin/fundings" },
             { title: "Patents", desc: "Manage patents data", link: "/admin/patents" },
             { title: "Members", desc: "Manage faculty & collaborators", link: "/admin/members" },

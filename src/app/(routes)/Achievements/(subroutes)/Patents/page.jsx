@@ -1,8 +1,10 @@
 "use client";
+import { useRouter } from "next/navigation";
 import BreadCrumbs from "@/components/BreadCrumbs/BreadCrumbs";
 import { useEffect, useState } from "react";
 
 export default function PatentsPage() {
+  const router = useRouter();
 
 
   const [patentData, setPatentData] = useState({});
@@ -53,10 +55,11 @@ export default function PatentsPage() {
             return (
               <div
                 key={index}
-                className="relative ml-4 sm:ml-7"
+                className="relative ml-4 sm:ml-7 mb-8 p-6 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:shadow-md hover:border-sky-300 transition-all duration-300"
+                onClick={() => router.push(`/Achievements/Patents/${patent.id}`)}
               >
                 <div className="w-4/5">
-                  <p className="font-bold mt-8 text-sky-600">{patent.attributes.title}</p>
+                  <p className="font-bold mt-0 text-sky-600 hover:text-sky-800 transition-colors">{patent.attributes.title}</p>
                   <p>{patent.attributes.description || 'No description provided.'}</p>
                   <p className="font-semibold">Inventors: {collaborators.length > 0 ? collaborators.map((c) => c.attributes?.name || 'Unknown').join(', ') : 'N/A'}</p>
                   <p className="font-semibold">Head: {headName}</p>

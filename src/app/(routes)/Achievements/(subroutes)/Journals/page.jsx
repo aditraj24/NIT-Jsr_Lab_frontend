@@ -1,14 +1,16 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import BreadCrumbs from "@/components/BreadCrumbs/BreadCrumbs";
 
 export default function JournalsPage() {
+  const router = useRouter();
   const [researchData, setResearchData] = useState({});
   const [years, setYears] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
-      const response = await fetch(`/api/achievement?populate=author`);
+      const response = await fetch(`/api/journal?populate=author`);
       const data = await response.json();
 
       const sortedData = data.data.sort((a, b) => new Date(b.attributes.Date) - new Date(a.attributes.Date));
@@ -41,11 +43,15 @@ export default function JournalsPage() {
               Published on {year}
             </h1>
             {researchData[year].map((data) => (
-              <div className="mb-8 bg-slate-50 rounded-lg shadow-sm border border-slate-200 mx-auto px-6 sm:px-10 py-8 flex flex-col w-11/12 md:w-3/4 max-w-4xl" key={data.id}>
+              <div 
+                className="mb-8 bg-slate-50 rounded-lg shadow-sm border border-slate-200 mx-auto px-6 sm:px-10 py-8 flex flex-col w-11/12 md:w-3/4 max-w-4xl cursor-pointer hover:shadow-md hover:border-sky-300 transition-all duration-300"
+                key={data.id}
+                onClick={() => router.push(`/Achievements/Journals/${data.id}`)}
+              >
                 
                 {/* Header: Title and Date */}
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-6 mb-4">
-                  <h3 className="text-left font-semibold text-xl text-sky-950">{data.attributes.Title}</h3>
+                  <h3 className="text-left font-semibold text-xl text-sky-950 hover:text-sky-700 transition-colors">{data.attributes.Title}</h3>
                   <span className="italic text-slate-500 whitespace-nowrap pt-1">{data.attributes.Date}</span>
                 </div>
                 
