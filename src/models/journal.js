@@ -14,7 +14,7 @@ const AchievementSchema = new Schema(
     // Dynamic Zone → usually stored as an array of objects
     AchivmentParagraph: [
       {
-        type: Schema.Types.Mixed, // flexible structure (since Strapi dynamic zone)
+        type: Schema.Types.Mixed, // flexible structure
         required: true,
       },
     ],
@@ -41,7 +41,7 @@ const AchievementSchema = new Schema(
       unique: true, // oneToOne relation
     },
 
-    // Optional: for i18n support (since Strapi had localization)
+    // Optional: for i18n support 
     locale: {
       type: String,
     },

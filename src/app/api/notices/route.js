@@ -22,7 +22,6 @@ export async function GET(req) {
       .limit(pageSize)
       .lean();
 
-    // Transform to Strapi-like response format
     const data = notices.map((notice) => ({
       id: notice._id.toString(),
       attributes: {

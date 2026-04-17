@@ -159,7 +159,7 @@ export async function GET(request) {
   }
 }
 
-// Helper function to transform docs array to Strapi-like format
+
 function transformDocs(docs) {
   if (!docs || !Array.isArray(docs)) return { data: [] };
 

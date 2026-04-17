@@ -18,7 +18,7 @@ export async function GET(request) {
 
     const total = await Gallery.countDocuments();
 
-    // Format response to match Strapi-like structure
+   
     const data = galleries.map((item) => ({
       id: item._id.toString(),
       attributes: {

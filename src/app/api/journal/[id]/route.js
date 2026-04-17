@@ -28,7 +28,7 @@ export async function GET(request, { params }) {
       );
     }
 
-    // Transform to Strapi-like response format
+   
     const response = {
       id: achievement._id.toString(),
       attributes: {

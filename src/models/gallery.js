@@ -14,7 +14,7 @@ const GallerySchema = new Schema(
   {
     // repeatable component → array
     images: {
-      type: [GalleryImageSchema], // better than Mixed
+      type: [GalleryImageSchema],
       required: true
     },
 

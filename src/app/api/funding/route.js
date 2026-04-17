@@ -67,7 +67,7 @@ export async function GET(request) {
       .sort({ date_of_funding: -1 })
       .lean();
 
-    // Transform to Strapi-like response format
+    
     const data = fundings.map((funding, index) => ({
       id: funding._id.toString(),
       attributes: {

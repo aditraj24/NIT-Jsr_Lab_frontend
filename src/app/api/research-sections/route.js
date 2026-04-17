@@ -13,7 +13,7 @@ export async function GET(request) {
       .sort({ createdAt: -1 })
       .lean();
 
-    // Format response to match Strapi-like structure expected by frontend
+    // Format response to matchstructure expected by frontend
     const data = researchSections.map((item) => ({
       id: item._id.toString(),
       attributes: {

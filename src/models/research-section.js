@@ -1,8 +1,8 @@
 import mongoose, { Schema, models, model } from "mongoose"
 
-// ---- Optional structured sub-schemas (recommended) ----
 
-// Generic small paragraph schema (can be reused)
+
+// Generic small paragraph schema 
 const SmallParagraphSchema = new Schema(
   {
     title: String,

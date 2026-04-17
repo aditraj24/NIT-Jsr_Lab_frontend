@@ -7,7 +7,7 @@ const FundingSchema = new Schema(
       required: true
     },
 
-    // biginteger → use Number or String (Number is safe up to ~1e15)
+    
     amount: {
       type: Number,
       required: true
