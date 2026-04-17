@@ -38,7 +38,6 @@ const AchievementSchema = new Schema(
     author: {
       type: Schema.Types.ObjectId,
       ref: "Member", // corresponds to api::member.member
-      unique: true, // oneToOne relation
     },
 
     // Optional: for i18n support 

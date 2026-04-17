@@ -3,292 +3,139 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
-import FileUpload from '@/components/FileUpload/FileUpload';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export default function AdminResearchSectionsPage() {
+export default function AdminResearchSectionsListPage() {
   const [loading, setLoading] = useState(true);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [sections, setSections] = useState([]);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const router = useRouter();
   const { isAdminLoggedIn: isLoggedIn, isLoading } = useAdminAuth();
 
-  const [formData, setFormData] = useState({
-    ResearchTitle: '',
-    ResearchSubTitle: '',
-    Description: '',
-    Thumbnail: '',
-  });
-  const [themes, setThemes] = useState([{ title: '', description: '' }]);
-  const [members, setMembers] = useState([{ title: '', description: '' }]);
-  const [papersPublished, setPapersPublished] = useState([{ title: '', description: '' }]);
-  const [aimAndSummary, setAimAndSummary] = useState([{ title: '', content: '' }]);
-  const [researchContent, setResearchContent] = useState([{ heading: '', body: '', media: '' }]);
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
   useEffect(() => {
     if (isLoading) return;
-    if (!isLoggedIn) {
-      router.push('/admin/login');
-      return;
-    }
+    if (!isLoggedIn) { router.push('/admin/login'); return; }
     setIsAdminLoggedIn(true);
     setLoading(false);
+    fetchSections();
   }, [isLoggedIn, isLoading, router]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleArrayChange = (setter) => (index, field, value) => {
-    setter((prev) => {
-      const copy = [...prev];
-      copy[index][field] = value;
-      return copy;
-    });
-  };
-
-  const addArrayItem = (setter, template) => () => setter((prev) => [...prev, { ...template }]);
-  const removeArrayItem = (setter) => (index) =>
-    setter((prev) => prev.filter((_, i) => i !== index));
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    setSubmitLoading(true);
-
+  const fetchSections = async () => {
     try {
-      const payload = {
-        ...formData,
-        Themes: themes.filter((item) => item.title.trim() || item.description.trim()),
-        Members: members.filter((item) => item.title.trim() || item.description.trim()),
-        PapersPublished: papersPublished.filter((item) => item.title.trim() || item.description.trim()),
-        AimAndSummary: aimAndSummary.filter((item) => item.title.trim() || item.content.trim()),
-        ReasearchContent: researchContent.filter((item) => item.heading.trim() || item.body.trim()),
-      };
-
-      const response = await fetch('/api/research-sections', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create research section');
-      }
-
-      setSuccess('Research section created successfully!');
-      setFormData({
-        ResearchTitle: '',
-        ResearchSubTitle: '',
-        Description: '',
-        Thumbnail: '',
-      });
-      setThemes([{ title: '', description: '' }]);
-      setMembers([{ title: '', description: '' }]);
-      setPapersPublished([{ title: '', description: '' }]);
-      setAimAndSummary([{ title: '', content: '' }]);
-      setResearchContent([{ heading: '', body: '', media: '' }]);
+      const response = await fetch('/api/research-sections');
+      const data = await response.json();
+      if (data.data) setSections(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
-      setError(err.message || 'Failed to create research section');
-      console.error(err);
-    } finally {
-      setSubmitLoading(false);
+      console.error('Error fetching research sections:', err);
+      setError('Failed to load research sections');
     }
+  };
+
+  const handleDelete = async (id) => {
+    setDeleteLoading(true); setError(''); setSuccess('');
+    try {
+      const response = await fetch(`/api/research-sections/${id}`, { method: 'DELETE' });
+      if (!response.ok) { const d = await response.json(); throw new Error(d.error || 'Failed to delete'); }
+      setSuccess('Research section deleted successfully!');
+      setDeleteId(null);
+      setSections((prev) => prev.filter((s) => s.id !== id));
+    } catch (err) {
+      setError(err.message || 'Failed to delete research section');
+    } finally { setDeleteLoading(false); }
   };
 
   if (loading || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-2xl text-gray-700">Loading...</div>
-      </div>
-    );
+    return (<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200"><div className="text-xl text-gray-600 animate-pulse">Loading research sections...</div></div>);
   }
-
   if (!isAdminLoggedIn) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 sm:py-12 px-4">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-4 sm:p-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Add Research Section</h1>
-        <p className="text-gray-600 mb-8">Create a new research section entry to be displayed on the Research page.</p>
-
-        {error && <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">{error}</div>}
-        {success && <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">{success}</div>}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="ResearchTitle" className="block text-sm font-semibold text-gray-700 mb-2">
-                Research Title *
-              </label>
-              <input
-                type="text"
-                id="ResearchTitle"
-                name="ResearchTitle"
-                value={formData.ResearchTitle}
-                onChange={handleInputChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter research title"
-              />
-            </div>
-            <div>
-              <label htmlFor="ResearchSubTitle" className="block text-sm font-semibold text-gray-700 mb-2">
-                Research Subtitle
-              </label>
-              <input
-                type="text"
-                id="ResearchSubTitle"
-                name="ResearchSubTitle"
-                value={formData.ResearchSubTitle}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter research subtitle"
-              />
-            </div>
-          </div>
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200">
+      <header className="backdrop-blur-md bg-white/70 border-b border-gray-200 shadow-sm sticky top-0 z-20">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <label htmlFor="Description" className="block text-sm font-semibold text-gray-700 mb-2">
-              Description *
-            </label>
-            <textarea
-              id="Description"
-              name="Description"
-              value={formData.Description}
-              onChange={handleInputChange}
-              required
-              rows="4"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter research description"
-            />
+            <h1 className="text-2xl font-bold text-gray-800 tracking-wide">Manage Research Sections</h1>
+            <p className="text-sm text-gray-500">View, edit, and manage all research section entries</p>
           </div>
-
-          <FileUpload
-            label="Thumbnail Image"
-            accept="image/*"
-            folder="mvi_lab/research"
-            value={formData.Thumbnail}
-            onChange={(url) => setFormData((prev) => ({ ...prev, Thumbnail: url }))}
-            required
-          />
-
-          {/* Themes */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Themes</span>
-              <button type="button" onClick={addArrayItem(setThemes, { title: '', description: '' })} className="text-blue-600 hover:text-blue-800">Add</button>
-            </div>
-            <div className="space-y-4 sm:space-y-2">
-              {themes.map((item, index) => (
-                <div className="flex flex-col sm:flex-row gap-2" key={`theme-${index}`}>
-                  <input type="text" value={item.title} onChange={(e) => handleArrayChange(setThemes)(index, 'title', e.target.value)} className="w-full sm:flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Theme title" />
-                  <input type="text" value={item.description} onChange={(e) => handleArrayChange(setThemes)(index, 'description', e.target.value)} className="w-full sm:flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Theme description" />
-                  {index > 0 && <button type="button" className="w-full sm:w-auto px-3 py-2 rounded-lg bg-red-500 text-white" onClick={() => removeArrayItem(setThemes)(index)}>Remove</button>}
-                </div>
-              ))}
-            </div>
+          <div className="flex gap-3">
+            <button onClick={() => router.push('/admin/research-sections/add')} className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">+ Add New Section</button>
+            <button onClick={() => router.push('/admin/dashboard')} className="bg-gray-600 hover:bg-gray-500 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">← Dashboard</button>
           </div>
+        </div>
+      </header>
 
-          {/* Members */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Members</span>
-              <button type="button" onClick={addArrayItem(setMembers, { title: '', description: '' })} className="text-blue-600 hover:text-blue-800">Add</button>
-            </div>
-            <div className="space-y-4 sm:space-y-2">
-              {members.map((item, index) => (
-                <div className="flex flex-col sm:flex-row gap-2" key={`member-${index}`}>
-                  <input type="text" value={item.title} onChange={(e) => handleArrayChange(setMembers)(index, 'title', e.target.value)} className="w-full sm:flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Member title" />
-                  <input type="text" value={item.description} onChange={(e) => handleArrayChange(setMembers)(index, 'description', e.target.value)} className="w-full sm:flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Member description" />
-                  {index > 0 && <button type="button" className="w-full sm:w-auto px-3 py-2 rounded-lg bg-red-500 text-white" onClick={() => removeArrayItem(setMembers)(index)}>Remove</button>}
-                </div>
-              ))}
-            </div>
-          </div>
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        <AnimatePresence>
+          {error && (<motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">{error}</motion.div>)}
+          {success && (<motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">{success}</motion.div>)}
+        </AnimatePresence>
 
-          {/* Papers Published */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Papers Published</span>
-              <button type="button" onClick={addArrayItem(setPapersPublished, { title: '', description: '' })} className="text-blue-600 hover:text-blue-800">Add</button>
-            </div>
-            <div className="space-y-4 sm:space-y-2">
-              {papersPublished.map((item, index) => (
-                <div className="flex flex-col sm:flex-row gap-2" key={`paper-${index}`}>
-                  <input type="text" value={item.title} onChange={(e) => handleArrayChange(setPapersPublished)(index, 'title', e.target.value)} className="w-full sm:flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Paper title" />
-                  <input type="text" value={item.description} onChange={(e) => handleArrayChange(setPapersPublished)(index, 'description', e.target.value)} className="w-full sm:flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Paper description" />
-                  {index > 0 && <button type="button" className="w-full sm:w-auto px-3 py-2 rounded-lg bg-red-500 text-white" onClick={() => removeArrayItem(setPapersPublished)(index)}>Remove</button>}
-                </div>
-              ))}
-            </div>
-          </div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-2xl shadow-md p-6 mb-8">
+          <p className="text-gray-600">Total Research Sections: <span className="font-bold text-gray-800 text-lg">{sections.length}</span></p>
+        </motion.div>
 
-          {/* Aim and Summary */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Aim and Summary</span>
-              <button type="button" onClick={addArrayItem(setAimAndSummary, { title: '', content: '' })} className="text-blue-600 hover:text-blue-800">Add</button>
-            </div>
-            <div className="space-y-4 sm:space-y-2">
-              {aimAndSummary.map((item, index) => (
-                <div className="flex flex-col sm:flex-row gap-2" key={`aim-${index}`}>
-                  <input type="text" value={item.title} onChange={(e) => handleArrayChange(setAimAndSummary)(index, 'title', e.target.value)} className="w-full sm:flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Aim title" />
-                  <textarea value={item.content} onChange={(e) => handleArrayChange(setAimAndSummary)(index, 'content', e.target.value)} className="w-full sm:flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Aim content" rows="2" />
-                  {index > 0 && <button type="button" className="w-full sm:w-auto px-3 py-2 rounded-lg bg-red-500 text-white" onClick={() => removeArrayItem(setAimAndSummary)(index)}>Remove</button>}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Research Content */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Research Content</span>
-              <button type="button" onClick={addArrayItem(setResearchContent, { heading: '', body: '', media: '' })} className="text-blue-600 hover:text-blue-800">Add</button>
-            </div>
-            <div className="space-y-4">
-              {researchContent.map((item, index) => (
-                <div className="p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3" key={`content-${index}`}>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <input type="text" value={item.heading} onChange={(e) => handleArrayChange(setResearchContent)(index, 'heading', e.target.value)} className="w-full sm:flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Content heading" />
-                    {index > 0 && <button type="button" className="w-full sm:w-auto px-3 py-2 rounded-lg bg-red-500 text-white" onClick={() => removeArrayItem(setResearchContent)(index)}>Remove</button>}
+        {sections.length === 0 ? (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+            <p className="text-gray-500 text-lg mb-4">No research sections found</p>
+            <button onClick={() => router.push('/admin/research-sections/add')} className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg transition-all">Add your first research section</button>
+          </motion.div>
+        ) : (
+          <div className="space-y-4">
+            {sections.map((section, i) => (
+              <motion.div key={section.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-6">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div className="flex gap-4 flex-1 min-w-0">
+                    {/* Thumbnail preview */}
+                    {section.attributes?.Thumbnail?.data?.attributes?.url && (
+                      <img
+                        src={section.attributes.Thumbnail.data.attributes.url}
+                        alt=""
+                        className="w-16 h-16 rounded-lg object-cover flex-shrink-0 border border-gray-200"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-800 truncate">{section.attributes?.ResearchTitle || 'Untitled'}</h3>
+                      {section.attributes?.ResearchSubTitle && (
+                        <p className="text-gray-500 text-sm">{section.attributes.ResearchSubTitle}</p>
+                      )}
+                      <p className="text-gray-400 text-sm mt-1 line-clamp-2">{section.attributes?.Description || 'No description'}</p>
+                      <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-gray-400">
+                        {section.attributes?.Themes?.length > 0 && (
+                          <span className="bg-blue-50 text-blue-600 px-2 py-1 rounded">🎯 {section.attributes.Themes.length} Theme(s)</span>
+                        )}
+                        {section.attributes?.Members?.length > 0 && (
+                          <span className="bg-green-50 text-green-600 px-2 py-1 rounded">👥 {section.attributes.Members.length} Member(s)</span>
+                        )}
+                        {section.attributes?.PapersPublished?.length > 0 && (
+                          <span className="bg-purple-50 text-purple-600 px-2 py-1 rounded">📄 {section.attributes.PapersPublished.length} Paper(s)</span>
+                        )}
+                        {section.attributes?.ReasearchContent?.length > 0 && (
+                          <span className="bg-orange-50 text-orange-600 px-2 py-1 rounded">📝 {section.attributes.ReasearchContent.length} Content block(s)</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <textarea value={item.body} onChange={(e) => handleArrayChange(setResearchContent)(index, 'body', e.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500" placeholder="Content body" rows="3" />
-                  <FileUpload
-                    label="Media"
-                    accept="image/*"
-                    folder="mvi_lab/research/content"
-                    value={item.media}
-                    onChange={(url) => handleArrayChange(setResearchContent)(index, 'media', url)}
-                  />
+                  <div className="flex gap-3 lg:flex-shrink-0">
+                    <button onClick={() => router.push(`/admin/research-sections/edit?id=${section.id}`)} className="bg-amber-500 hover:bg-amber-400 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm hover:shadow-md text-sm">✏️ Edit</button>
+                    {deleteId === section.id ? (
+                      <div className="flex gap-2">
+                        <button onClick={() => handleDelete(section.id)} disabled={deleteLoading} className="bg-red-600 hover:bg-red-500 disabled:bg-gray-400 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm text-sm">{deleteLoading ? 'Deleting...' : 'Confirm'}</button>
+                        <button onClick={() => setDeleteId(null)} className="bg-gray-400 hover:bg-gray-300 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm text-sm">Cancel</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setDeleteId(section.id)} className="bg-red-500 hover:bg-red-400 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm hover:shadow-md text-sm">🗑️ Delete</button>
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
+              </motion.div>
+            ))}
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              type="submit"
-              disabled={submitLoading}
-              className="w-full sm:flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 sm:py-2 px-4 rounded-lg transition"
-            >
-              {submitLoading ? 'Creating...' : 'Create Research Section'}
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push('/admin/dashboard')}
-              className="w-full sm:flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 sm:py-2 px-4 rounded-lg transition"
-            >
-              Back to Dashboard
-            </button>
-          </div>
-        </form>
-      </div>
+        )}
+      </main>
     </div>
   );
 }

@@ -21,8 +21,7 @@ const PatentSchema = new Schema(
     // oneToOne → ObjectId
     head: {
       type: Schema.Types.ObjectId,
-      ref: "Member",
-      unique: true
+      ref: "Member"
     },
 
     // manyToMany → array of ObjectIds
@@ -45,8 +44,7 @@ const PatentSchema = new Schema(
     // oneToOne with Department (inverse side)
     department: {
       type: Schema.Types.ObjectId,
-      ref: "Department",
-      unique: true
+      ref: "Department"
     },
 
     // i18n support
@@ -69,6 +67,10 @@ const PatentSchema = new Schema(
     timestamps: true
   }
 )
+
+// Sparse unique indexes — only enforce uniqueness for non-null values
+PatentSchema.index({ head: 1 }, { unique: true, sparse: true })
+PatentSchema.index({ department: 1 }, { unique: true, sparse: true })
 
 export const Patent =
   models.Patent || model("Patent", PatentSchema)

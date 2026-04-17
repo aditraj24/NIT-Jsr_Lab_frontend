@@ -3,246 +3,118 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
-import FileUpload from '@/components/FileUpload/FileUpload';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const roles = ['Pass-Out Student', 'Collaborative Researchers'];
-
-export default function AdminMembersPage() {
+export default function AdminMembersListPage() {
   const [loading, setLoading] = useState(true);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [members, setMembers] = useState([]);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const router = useRouter();
   const { isAdminLoggedIn: isLoggedIn, isLoading } = useAdminAuth();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    position: '',
-    department: '',
-    role: 'Collaborative Researchers',
-    about: '',
-    bio: '',
-    qualifications: '',
-    specialization: '',
-    profilePhoto: '',
-    resume: '',
-  });
-  const [researchItems, setResearchItems] = useState(['']);
-  const [projectItems, setProjectItems] = useState(['']);
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
   useEffect(() => {
     if (isLoading) return;
-    if (!isLoggedIn) {
-      router.push('/admin/login');
-      return;
-    }
+    if (!isLoggedIn) { router.push('/admin/login'); return; }
     setIsAdminLoggedIn(true);
     setLoading(false);
+    fetchMembers();
   }, [isLoggedIn, isLoading, router]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleArrayChange = (setter) => (index, value) => {
-    setter((prev) => {
-      const copy = [...prev];
-      copy[index] = value;
-      return copy;
-    });
-  };
-
-  const addArrayItem = (setter) => () => setter((prev) => [...prev, '']);
-  const removeArrayItem = (setter) => (index) =>
-    setter((prev) => prev.filter((_, i) => i !== index));
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-    setSubmitLoading(true);
-
+  const fetchMembers = async () => {
     try {
-      const payload = {
-        ...formData,
-        researchList: researchItems.filter((item) => item.trim()).map((item) => ({ research: item.trim() })),
-        projectList: projectItems.filter((item) => item.trim()).map((item) => ({ project: item.trim() })),
-      };
-
-      const response = await fetch('/api/members', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create member');
-      }
-
-      setSuccess('Member created successfully!');
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        position: '',
-        department: '',
-        role: 'Collaborative Researchers',
-        about: '',
-        bio: '',
-        qualifications: '',
-        specialization: '',
-        profilePhoto: '',
-        resume: '',
-      });
-      setResearchItems(['']);
-      setProjectItems(['']);
+      const response = await fetch('/api/members');
+      const data = await response.json();
+      if (data.data) setMembers(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
-      setError(err.message || 'Failed to create member');
-      console.error(err);
-    } finally {
-      setSubmitLoading(false);
+      console.error('Error fetching members:', err);
+      setError('Failed to load members');
     }
+  };
+
+  const handleDelete = async (id) => {
+    setDeleteLoading(true); setError(''); setSuccess('');
+    try {
+      const response = await fetch(`/api/members/${id}`, { method: 'DELETE' });
+      if (!response.ok) { const d = await response.json(); throw new Error(d.error || 'Failed to delete member'); }
+      setSuccess('Member deleted successfully!');
+      setDeleteId(null);
+      setMembers((prev) => prev.filter((m) => m.id !== id));
+    } catch (err) {
+      setError(err.message || 'Failed to delete member');
+    } finally { setDeleteLoading(false); }
   };
 
   if (loading || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-2xl text-gray-700">Loading...</div>
-      </div>
-    );
+    return (<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200"><div className="text-xl text-gray-600 animate-pulse">Loading members...</div></div>);
   }
-
   if (!isAdminLoggedIn) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Add Member / Collaborator / Alumni</h1>
-        <p className="text-gray-600 mb-8">Create a member record for the Members pages.</p>
-
-        {error && <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">{error}</div>}
-        {success && <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">{success}</div>}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-semibold text-gray-700">Name *</span>
-              <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-            </label>
-            <label className="block">
-              <span className="text-sm font-semibold text-gray-700">Role *</span>
-              <select name="role" value={formData.role} onChange={handleInputChange} required className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
-                {roles.map((role) => (
-                  <option key={role} value={role}>{role}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-semibold text-gray-700">Email</span>
-              <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-            </label>
-            <label className="block">
-              <span className="text-sm font-semibold text-gray-700">Phone</span>
-              <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-            </label>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="text-sm font-semibold text-gray-700">Position</span>
-              <input type="text" name="position" value={formData.position} onChange={handleInputChange} className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-            </label>
-            <label className="block">
-              <span className="text-sm font-semibold text-gray-700">Department</span>
-              <input type="text" name="department" value={formData.department} onChange={handleInputChange} className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-            </label>
-          </div>
-
-          <label className="block">
-            <span className="text-sm font-semibold text-gray-700">About</span>
-            <textarea name="about" value={formData.about} onChange={handleInputChange} rows="4" className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-          </label>
-
-          <label className="block">
-            <span className="text-sm font-semibold text-gray-700">Bio</span>
-            <textarea name="bio" value={formData.bio} onChange={handleInputChange} rows="3" className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-          </label>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FileUpload
-              label="Profile Photo"
-              accept="image/*"
-              folder="mvi_lab/members"
-              value={formData.profilePhoto}
-              onChange={(url) => setFormData((prev) => ({ ...prev, profilePhoto: url }))}
-            />
-            <FileUpload
-              label="Resume"
-              accept=".pdf,.doc,.docx"
-              folder="mvi_lab/resumes"
-              value={formData.resume}
-              onChange={(url) => setFormData((prev) => ({ ...prev, resume: url ? url.replace('/image/upload/', '/raw/upload/') : url }))}
-            />
-          </div>
-
-          <label className="block">
-            <span className="text-sm font-semibold text-gray-700">Qualifications</span>
-            <input type="text" name="qualifications" value={formData.qualifications} onChange={handleInputChange} className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-          </label>
-
-          <label className="block">
-            <span className="text-sm font-semibold text-gray-700">Specialization</span>
-            <input type="text" name="specialization" value={formData.specialization} onChange={handleInputChange} className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500" />
-          </label>
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200">
+      <header className="backdrop-blur-md bg-white/70 border-b border-gray-200 shadow-sm sticky top-0 z-20">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Research Items</span>
-              <button type="button" onClick={addArrayItem(setResearchItems)} className="text-sky-600 hover:text-sky-800">Add</button>
-            </div>
-            <div className="space-y-2">
-              {researchItems.map((item, index) => (
-                <div className="flex gap-2" key={`research-${index}`}>
-                  <input type="text" value={item} onChange={(e) => handleArrayChange(setResearchItems)(index, e.target.value)} className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:ring-sky-500" placeholder="Research item" />
-                  {index > 0 && <button type="button" className="px-3 rounded-lg bg-red-500 text-white" onClick={() => removeArrayItem(setResearchItems)(index)}>Remove</button>}
-                </div>
-              ))}
-            </div>
+            <h1 className="text-2xl font-bold text-gray-800 tracking-wide">Manage Members</h1>
+            <p className="text-sm text-gray-500">View, edit, and manage all member entries</p>
           </div>
+          <div className="flex gap-3">
+            <button onClick={() => router.push('/admin/members/add')} className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">+ Add New Member</button>
+            <button onClick={() => router.push('/admin/dashboard')} className="bg-gray-600 hover:bg-gray-500 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">← Dashboard</button>
+          </div>
+        </div>
+      </header>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Project Items</span>
-              <button type="button" onClick={addArrayItem(setProjectItems)} className="text-sky-600 hover:text-sky-800">Add</button>
-            </div>
-            <div className="space-y-2">
-              {projectItems.map((item, index) => (
-                <div className="flex gap-2" key={`project-${index}`}>
-                  <input type="text" value={item} onChange={(e) => handleArrayChange(setProjectItems)(index, e.target.value)} className="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-sky-500 focus:ring-sky-500" placeholder="Project item" />
-                  {index > 0 && <button type="button" className="px-3 rounded-lg bg-red-500 text-white" onClick={() => removeArrayItem(setProjectItems)(index)}>Remove</button>}
-                </div>
-              ))}
-            </div>
-          </div>
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        <AnimatePresence>
+          {error && (<motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">{error}</motion.div>)}
+          {success && (<motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">{success}</motion.div>)}
+        </AnimatePresence>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <button type="submit" disabled={submitLoading} className="w-full bg-sky-600 hover:bg-sky-700 text-white rounded-lg px-6 py-3 font-semibold disabled:bg-gray-400">
-              {submitLoading ? 'Saving...' : 'Create Member'}
-            </button>
-            <button type="button" onClick={() => router.push('/admin/dashboard')} className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-lg px-6 py-3 font-semibold">
-              Back to Dashboard
-            </button>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/70 backdrop-blur-md border border-gray-200 rounded-2xl shadow-md p-6 mb-8">
+          <p className="text-gray-600">Total Members: <span className="font-bold text-gray-800 text-lg">{members.length}</span></p>
+        </motion.div>
+
+        {members.length === 0 ? (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
+            <p className="text-gray-500 text-lg mb-4">No members found</p>
+            <button onClick={() => router.push('/admin/members/add')} className="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-3 rounded-lg transition-all">Add your first member</button>
+          </motion.div>
+        ) : (
+          <div className="space-y-4">
+            {members.map((member, i) => (
+              <motion.div key={member.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-6">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold text-gray-800 truncate">{member.attributes?.name || 'Unnamed'}</h3>
+                    <p className="text-gray-500 text-sm mt-1 line-clamp-2">{member.attributes?.about || member.attributes?.bio || 'No description'}</p>
+                    <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-gray-400">
+                      {member.attributes?.role && (<span className="bg-blue-50 text-blue-600 px-2 py-1 rounded">🏷️ {member.attributes.role}</span>)}
+                      {member.attributes?.email && (<span className="bg-gray-100 px-2 py-1 rounded">✉️ {member.attributes.email}</span>)}
+                      {member.attributes?.department && (<span className="bg-purple-50 text-purple-600 px-2 py-1 rounded">🏛️ {member.attributes.department}</span>)}
+                      {member.attributes?.position && (<span className="bg-green-50 text-green-600 px-2 py-1 rounded">💼 {member.attributes.position}</span>)}
+                    </div>
+                  </div>
+                  <div className="flex gap-3 lg:flex-shrink-0">
+                    <button onClick={() => router.push(`/admin/members/edit?id=${member.id}`)} className="bg-amber-500 hover:bg-amber-400 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm hover:shadow-md text-sm">✏️ Edit</button>
+                    {deleteId === member.id ? (
+                      <div className="flex gap-2">
+                        <button onClick={() => handleDelete(member.id)} disabled={deleteLoading} className="bg-red-600 hover:bg-red-500 disabled:bg-gray-400 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm text-sm">{deleteLoading ? 'Deleting...' : 'Confirm'}</button>
+                        <button onClick={() => setDeleteId(null)} className="bg-gray-400 hover:bg-gray-300 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm text-sm">Cancel</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setDeleteId(member.id)} className="bg-red-500 hover:bg-red-400 text-white font-medium px-4 py-2 rounded-lg transition shadow-sm hover:shadow-md text-sm">🗑️ Delete</button>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
-        </form>
-      </div>
+        )}
+      </main>
     </div>
   );
 }
