@@ -124,7 +124,7 @@ export default function AdminNoticesPage() {
             accept=".pdf"
             folder="mvi_lab/notices"
             value={formData.Pdf}
-            onChange={(url) => setFormData((prev) => ({ ...prev, Pdf: url }))}
+            onChange={(url) => setFormData((prev) => ({ ...prev, Pdf: url ? url.replace('/image/upload/', '/raw/upload/') : url }))}
             required
           />
 

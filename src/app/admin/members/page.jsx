@@ -189,7 +189,7 @@ export default function AdminMembersPage() {
               accept=".pdf,.doc,.docx"
               folder="mvi_lab/resumes"
               value={formData.resume}
-              onChange={(url) => setFormData((prev) => ({ ...prev, resume: url }))}
+              onChange={(url) => setFormData((prev) => ({ ...prev, resume: url ? url.replace('/image/upload/', '/raw/upload/') : url }))}
             />
           </div>
 

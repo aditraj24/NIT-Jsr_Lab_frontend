@@ -31,10 +31,10 @@ export async function GET(req) {
         Pdf: populate === "Pdf" ? {
           data: {
             attributes: {
-              url: notice.Pdf
+              url: notice.Pdf ? notice.Pdf.replace('/image/upload/', '/raw/upload/') : notice.Pdf
             }
           }
-        } : notice.Pdf,
+        } : (notice.Pdf ? notice.Pdf.replace('/image/upload/', '/raw/upload/') : notice.Pdf),
         createdAt: notice.createdAt,
         updatedAt: notice.updatedAt,
         publishedAt: notice.publishedAt,
@@ -66,13 +66,17 @@ export async function POST(req) {
     await connectDB();
 
     const body = await req.json();
-    const { Title, Description, Pdf, publishedAt } = body;
+    let { Title, Description, Pdf, publishedAt } = body;
 
     if (!Title || !Description || !Pdf) {
       return NextResponse.json(
         { error: "Missing required fields: Title, Description, Pdf" },
         { status: 400 }
       );
+    }
+
+    if (Pdf && typeof Pdf === 'string') {
+      Pdf = Pdf.replace('/image/upload/', '/raw/upload/');
     }
 
     const notice = new Notice({

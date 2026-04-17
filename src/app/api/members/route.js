@@ -47,7 +47,7 @@ export async function GET(request) {
           ? {
               data: {
                 attributes: {
-                  url: member.resume,
+                  url: member.resume.replace('/image/upload/', '/raw/upload/'),
                 },
               }
             }
@@ -104,7 +104,7 @@ export async function POST(request) {
       qualifications: body.qualifications || "",
       specialization: body.specialization || "",
       profilePhoto: body.profilePhoto || "",
-      resume: body.resume || "",
+      resume: (body.resume && typeof body.resume === 'string') ? body.resume.replace('/image/upload/', '/raw/upload/') : (body.resume || ""),
       researchList: body.researchList || [],
       projectList: body.projectList || [],
       publishedAt: body.publishedAt || new Date(),
@@ -133,7 +133,7 @@ export async function POST(request) {
                 : null,
             },
             resume: member.resume
-              ? { data: { attributes: { url: member.resume } } }
+              ? { data: { attributes: { url: member.resume.replace('/image/upload/', '/raw/upload/') } } }
               : null,
             createdAt: member.createdAt,
             updatedAt: member.updatedAt,

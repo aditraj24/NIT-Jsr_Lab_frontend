@@ -283,7 +283,7 @@ export default function AdminPatentsPage() {
                       value={url}
                       onChange={(uploadedUrl) => {
                         const newDocUrls = [...docUrls];
-                        newDocUrls[index] = uploadedUrl;
+                        newDocUrls[index] = uploadedUrl ? uploadedUrl.replace('/image/upload/', '/raw/upload/') : uploadedUrl;
                         setDocUrls(newDocUrls);
                       }}
                     />

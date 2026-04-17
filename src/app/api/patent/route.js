@@ -23,7 +23,7 @@ export async function POST(request) {
     const patent = await Patent.create({
       title: body.title,
       description: body.description || "",
-      docs: body.docs || [],
+      docs: (body.docs || []).map(url => url ? url.replace('/image/upload/', '/raw/upload/') : url),
       head: body.head || null,
       collaborators: body.collaborators || [],
       cover_image: body.cover_image || "",
@@ -168,7 +168,7 @@ function transformDocs(docs) {
       id: index + 1,
       attributes: {
         name: typeof doc === "string" ? doc.split("/").pop() : doc.name || "",
-        url: typeof doc === "string" ? doc : doc.url || "",
+        url: typeof doc === "string" ? doc.replace('/image/upload/', '/raw/upload/') : (doc.url ? doc.url.replace('/image/upload/', '/raw/upload/') : ""),
       },
     })),
   };

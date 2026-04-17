@@ -39,7 +39,7 @@ export async function GET(request, { params }) {
         resume: member.resume
           ? {
               data: {
-                attributes: { url: member.resume },
+                attributes: { url: member.resume.replace('/image/upload/', '/raw/upload/') },
               },
             }
           : null,

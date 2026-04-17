@@ -239,7 +239,7 @@ export default function AdminAchievementsPage() {
               accept=".pdf"
               folder="mvi_lab/achievements"
               value={formData.Pdf}
-              onChange={(url) => setFormData((prev) => ({ ...prev, Pdf: url }))}
+              onChange={(url) => setFormData((prev) => ({ ...prev, Pdf: url ? url.replace('/image/upload/', '/raw/upload/') : url }))}
             />
 
             {/* Submit Button */}

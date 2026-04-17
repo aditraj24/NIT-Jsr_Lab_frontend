@@ -89,7 +89,7 @@ function transformDocs(docs) {
       id: index + 1,
       attributes: {
         name: typeof doc === "string" ? doc.split("/").pop() : doc.name || "",
-        url: typeof doc === "string" ? doc : doc.url || "",
+        url: typeof doc === "string" ? doc.replace('/image/upload/', '/raw/upload/') : (doc.url ? doc.url.replace('/image/upload/', '/raw/upload/') : ""),
       },
     })),
   };

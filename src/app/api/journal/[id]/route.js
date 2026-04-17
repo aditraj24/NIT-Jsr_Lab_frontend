@@ -38,7 +38,7 @@ export async function GET(request, { params }) {
         Thumbnail: achievement.Thumbnail,
         Link: achievement.Link,
         Date: achievement.Date,
-        Pdf: achievement.Pdf,
+        Pdf: achievement.Pdf ? achievement.Pdf.replace('/image/upload/', '/raw/upload/') : achievement.Pdf,
         createdAt: achievement.createdAt,
         updatedAt: achievement.updatedAt,
         publishedAt: achievement.publishedAt,

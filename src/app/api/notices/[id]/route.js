@@ -31,7 +31,7 @@ export async function GET(request, { params }) {
         Pdf: item.Pdf ? {
           data: {
             attributes: {
-              url: item.Pdf
+              url: item.Pdf.replace('/image/upload/', '/raw/upload/')
             }
           }
         } : null,

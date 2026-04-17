@@ -39,7 +39,7 @@ export async function GET(request) {
           ? {
               data: {
                 attributes: {
-                  url: student.resume,
+                  url: student.resume.replace('/image/upload/', '/raw/upload/'),
                 },
               },
             }
@@ -92,7 +92,7 @@ export async function POST(request) {
       about: body.about || "",
       researchList: body.researchList || [],
       projectList: body.projectList || [],
-      resume: body.resume || "",
+      resume: (body.resume && typeof body.resume === 'string') ? body.resume.replace('/image/upload/', '/raw/upload/') : (body.resume || ""),
       publishedAt: body.publishedAt || new Date(),
     });
 
@@ -113,7 +113,7 @@ export async function POST(request) {
                 : null,
             },
             resume: student.resume
-              ? { data: { attributes: { url: student.resume } } }
+              ? { data: { attributes: { url: student.resume.replace('/image/upload/', '/raw/upload/') } } }
               : null,
             createdAt: student.createdAt,
             updatedAt: student.updatedAt,
