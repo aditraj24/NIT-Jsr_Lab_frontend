@@ -1,10 +1,7 @@
 import { Noto_Sans_Display } from "next/font/google";
 import "./globals.css";
-import { NewsProvider } from "@/contexts/NewsContext";
-import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
-// import LayoutClient from "@/components/LayoutClient/LayoutClient";
-import Footer from "@/components/Footer/Footer";
-// import Navbar from "@/components/Navbar/navbar";
+import Providers from "./providers";
+import ClientFooter from "@/components/ClientFooter"; // ✅ changed
 
 const sans = Noto_Sans_Display({ subsets: ["latin"] });
 
@@ -15,15 +12,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <NewsProvider>
-      <AdminAuthProvider>
-        <html lang="en">
-          <body className={`${sans.className} bg-gray-50`}>
-            {children}
-            <Footer />
-          </body>
-        </html>
-      </AdminAuthProvider>
-    </NewsProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${sans.className} bg-gray-50`} suppressHydrationWarning>
+        <Providers>
+          {children}
+          <ClientFooter /> {/* ✅ changed */}
+        </Providers>
+      </body>
+    </html>
   );
 }

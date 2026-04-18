@@ -33,7 +33,7 @@ export default function JournalsPage() {
 
   return (
     <div className='flex flex-col bg-white py-5 min-h-dvh text-slate-600 '>
-      <BreadCrumbs />
+      <BreadCrumbs title="Journals" />
       <h1 className='text-5xl font-sans font-light relative text-right text-sky-900 mr-6 sm:mr-10 my-8'>JOURNALS</h1>
       <div className=" h-[2px] bg-slate-300 mx-10 mb-5"></div>
       {

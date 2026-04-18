@@ -50,7 +50,7 @@ export default function PatentDetailPage() {
   if (error || !patent) {
     return (
       <div className="flex flex-col bg-white py-5 min-h-dvh text-slate-600">
-        <BreadCrumbs />
+        <BreadCrumbs title={patent.attributes.title}/>
         <div className="flex flex-col items-center justify-center mt-20">
           <h1 className="text-2xl font-semibold text-red-600 mb-4">
             {error || "Patent not found"}
