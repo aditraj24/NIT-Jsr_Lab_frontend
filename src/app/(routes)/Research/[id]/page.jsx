@@ -64,7 +64,7 @@ const ResearchItem = ({ params }) => {
         imageUrl={thumbnailImage}
       />
 
-      <Breadcrumbs />
+      {!loading && researchItem && <Breadcrumbs title={ResearchTitle} />}
 
       <Theme
         themes={Themes?.map((theme) => theme.title || theme.description) || []}
@@ -82,7 +82,11 @@ const ResearchItem = ({ params }) => {
 
       <ResearchPapers papers={PapersPublished || []} />
 
-      <ResearchMembers membersList={Members?.map((member) => member.title || member.description) || []} />
+      <ResearchMembers
+        membersList={
+          Members?.map((member) => member.title || member.description) || []
+        }
+      />
     </div>
   );
 };

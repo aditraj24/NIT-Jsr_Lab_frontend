@@ -3,7 +3,6 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import BreadCrumbs from "@/components/BreadCrumbs/BreadCrumbs";
-import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function JournalDetailPage() {
   const params = useParams();
@@ -11,6 +10,7 @@ export default function JournalDetailPage() {
   const [journal, setJournal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const title = journal?.attributes?.Title || "Journal";
 
   useEffect(() => {
     const getData = async () => {
@@ -37,18 +37,12 @@ export default function JournalDetailPage() {
     }
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-dvh bg-white">
-        <LoadingSpinner />
-      </div>
-    );
-  }
+  
 
   if (error || !journal) {
     return (
       <div className="flex flex-col bg-white py-5 min-h-dvh text-slate-600">
-        <BreadCrumbs />
+        <BreadCrumbs title={title}/>
         <div className="flex flex-col items-center justify-center mt-20">
           <h1 className="text-2xl font-semibold text-red-600 mb-4">
             {error || "Journal not found"}
@@ -77,7 +71,7 @@ export default function JournalDetailPage() {
 
   return (
     <div className="flex flex-col bg-white py-5 min-h-dvh text-slate-600">
-      <BreadCrumbs />
+      <BreadCrumbs title={title}/>
       
       {/* Header Section */}
       <div className="max-w-4xl mx-auto w-11/12 md:w-3/4 mt-8 mb-8">

@@ -58,7 +58,9 @@ function NewsPage() {
   return (
     <div className="flex flex-col bg-gray-50 py-5 min-h-dvh text-slate-600 text-right items-center">
       <div className="pt-6 text-left flex justify-start max-w-[1256px] w-full px-4 sm:px-6 lg:px-8">
-        <BreadCrumbs />
+        <BreadCrumbs
+          title="News"
+        />
       </div>
 
       <div className="w-full max-w-[1256px] px-4 sm:px-6 lg:px-8">

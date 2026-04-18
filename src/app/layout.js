@@ -1,7 +1,7 @@
 import { Noto_Sans_Display } from "next/font/google";
 import "./globals.css";
-import Providers from "./providers"; //  single client boundary
-import Footer from "@/components/Footer/Footer";
+import Providers from "./providers";
+import ClientFooter from "@/components/ClientFooter"; // ✅ changed
 
 const sans = Noto_Sans_Display({ subsets: ["latin"] });
 
@@ -12,11 +12,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${sans.className} bg-gray-50`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${sans.className} bg-gray-50`} suppressHydrationWarning>
         <Providers>
           {children}
-          <Footer />
+          <ClientFooter /> {/* ✅ changed */}
         </Providers>
       </body>
     </html>
