@@ -4,6 +4,7 @@ const AchievementSchema = new Schema(
   {
     Title: {
       type: String,
+      required:true,
     },
 
     Description: {
@@ -36,8 +37,9 @@ const AchievementSchema = new Schema(
     },
 
     author: {
-      type: Schema.Types.ObjectId,
-      ref: "Member", // corresponds to api::member.member
+      type: Schema.Types.Mixed,
+      ref: "Member",
+      default:null, // corresponds to api::member.member
     },
 
     // Optional: for i18n support 
